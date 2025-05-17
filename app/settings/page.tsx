@@ -122,7 +122,7 @@ export default function SettingsPage() {
                                     <SelectGroup>
                                         <SelectItem value="divided-difference">Divided Difference</SelectItem>
                                         <SelectItem value="lagrange" disabled>Lagrange (Coming soon)</SelectItem>
-                                        <SelectItem value="spline" disabled>Cubic Spline (Coming soon)</SelectItem>
+
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
