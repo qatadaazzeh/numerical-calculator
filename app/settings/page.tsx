@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useTheme } from "next-themes";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
@@ -9,11 +8,11 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { useSettings } from "@/context/settings-context";
 
 export default function SettingsPage() {
     const { theme, setTheme } = useTheme();
-    const [decimalPlaces, setDecimalPlaces] = useState("6");
-    const [showIterationSteps, setShowIterationSteps] = useState(true); return (
+    const { decimalPlaces, setDecimalPlaces, showIterationSteps, setShowIterationSteps } = useSettings();return (
         <MainLayout>
             <div className="flex flex-col gap-6">
                 <div className="space-y-2 pb-2">
@@ -54,9 +53,7 @@ export default function SettingsPage() {
                             </Select>
                         </div>
 
-                        <Separator />
-
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <Separator />                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div>
                                 <Label htmlFor="decimalPlaces" className="text-base">Decimal Places</Label>
                                 <p className="text-sm text-muted-foreground">
@@ -64,8 +61,8 @@ export default function SettingsPage() {
                                 </p>
                             </div>
                             <Select
-                                value={decimalPlaces}
-                                onValueChange={setDecimalPlaces}
+                                value={decimalPlaces.toString()}
+                                onValueChange={(value) => setDecimalPlaces(parseInt(value, 10))}
                             >
                                 <SelectTrigger id="decimalPlaces" className="w-full sm:w-[180px]">
                                     <SelectValue placeholder="Select precision" />
@@ -80,6 +77,9 @@ export default function SettingsPage() {
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
+                            <div className="text-sm text-muted-foreground mt-1 ml-auto">
+                              Example: {(Math.PI).toFixed(decimalPlaces)}
+                            </div>
                         </div>
 
                         <Separator />

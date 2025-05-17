@@ -5,8 +5,10 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSettings } from "@/context/settings-context";
 
 export default function DividedDifferencePage() {
+    const { decimalPlaces } = useSettings();
     const [points, setPoints] = useState([
         { x: 0, y: 0 },
         { x: 1, y: 0 },
@@ -14,6 +16,11 @@ export default function DividedDifferencePage() {
     const [xValue, setXValue] = useState("");
     const [result, setResult] = useState<number | null>(null);
     const [dividedDifferenceTable, setDividedDifferenceTable] = useState<number[][]>([]);
+    
+    // Format numbers according to global decimal places setting
+    const formatNumber = (num: number): string => {
+        return num.toFixed(decimalPlaces);
+    };
 
     const addPoint = () => {
         setPoints([...points, { x: 0, y: 0 }]);
@@ -149,12 +156,10 @@ export default function DividedDifferencePage() {
                                 Calculate Value
                             </span>
                         </Button>
-                    </div>
-
-                        {result !== null && (
+                    </div>                        {result !== null && (
                             <div className="mt-4 p-4 border rounded-lg bg-muted/30">
                                 <div className="text-sm text-muted-foreground mb-1">Interpolated value:</div>
-                                <p className="font-bold text-lg break-all">{result}</p>
+                                <p className="font-bold text-lg break-all">{formatNumber(result)}</p>
                             </div>
                         )}
 
@@ -179,10 +184,9 @@ export default function DividedDifferencePage() {
                                                 <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                                                     <td className="border p-2 text-xs sm:text-sm">{i}</td>
                                                     <td className="border p-2 text-xs sm:text-sm">{point.x}</td>
-                                                    {Array.from({ length: Math.min(i + 1, points.length) }, (_, j) => (
-                                                        <td key={j} className="border p-2 text-xs sm:text-sm">
+                                                    {Array.from({ length: Math.min(i + 1, points.length) }, (_, j) => (                                                        <td key={j} className="border p-2 text-xs sm:text-sm">
                                                             {j < dividedDifferenceTable[i]?.length ?
-                                                                dividedDifferenceTable[i][j]?.toFixed(6) : ""}
+                                                                formatNumber(dividedDifferenceTable[i][j]) : ""}
                                                         </td>
                                                     ))}
                                                 </tr>

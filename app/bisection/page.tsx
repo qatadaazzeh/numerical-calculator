@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import * as math from 'mathjs';
+import { useSettings } from "@/context/settings-context";
 
 interface BisectionStep {
     iteration: number;
@@ -19,6 +20,7 @@ interface BisectionStep {
 }
 
 export default function BisectionPage() {
+    const { decimalPlaces, showIterationSteps } = useSettings();
     const [equation, setEquation] = useState("x^2-4");
     const [a, setA] = useState("0");
     const [b, setB] = useState("3");
@@ -27,6 +29,11 @@ export default function BisectionPage() {
     const [result, setResult] = useState<number | null>(null);
     const [steps, setSteps] = useState<BisectionStep[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    
+    // Format numbers according to global decimal places setting
+    const formatNumber = (num: number): string => {
+        return num.toFixed(decimalPlaces);
+    };
 
     // Function to evaluate mathematical expressions using mathjs
     const evaluateExpression = (expr: string, x: number): number => {
@@ -224,18 +231,17 @@ export default function BisectionPage() {
                         <CardTitle>Result</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid gap-2 sm:grid-cols-2">
-                            <div className="p-3 rounded-md bg-muted/30">
+                        <div className="grid gap-2 sm:grid-cols-2">                            <div className="p-3 rounded-md bg-muted/30">
                                 <div className="text-sm text-muted-foreground">Root:</div>
-                                <div className="font-bold text-lg break-all">{result}</div>
+                                <div className="font-bold text-lg break-all">{formatNumber(result)}</div>
                             </div>
                             <div className="p-3 rounded-md bg-muted/30">
                                 <div className="text-sm text-muted-foreground">Function value:</div>
-                                <div className="font-bold break-all">{evaluateExpression(equation, result).toFixed(10)}</div>
+                                <div className="font-bold break-all">{formatNumber(evaluateExpression(equation, result))}</div>
                             </div>
                             <div className="p-3 rounded-md bg-muted/30">
                                 <div className="text-sm text-muted-foreground">Final error:</div>
-                                <div className="font-bold break-all">{steps[steps.length - 1].error.toFixed(10)}</div>
+                                <div className="font-bold break-all">{formatNumber(steps[steps.length - 1].error)}</div>
                             </div>
                             <div className="p-3 rounded-md bg-muted/30">
                                 <div className="text-sm text-muted-foreground">Iterations:</div>
@@ -266,16 +272,15 @@ export default function BisectionPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {steps.map((step, index) => (
-                                        <tr key={step.iteration} className={index % 2 === 0 ? "bg-background" : "bg-muted/20"}>
+                                    {steps.map((step, index) => (                                        <tr key={step.iteration} className={index % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                                             <td className="border p-2 text-xs sm:text-sm">{step.iteration}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.a.toFixed(6)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.b.toFixed(6)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.c.toFixed(6)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.fa.toFixed(6)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.fb.toFixed(6)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.fc.toFixed(6)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.error.toFixed(6)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.a)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.b)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.c)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fa)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fb)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fc)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.error)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
