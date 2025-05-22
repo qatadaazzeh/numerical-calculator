@@ -13,7 +13,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Icons
+
 import { Settings, User, LogOut } from "lucide-react";
 
 export function TopNav() {

@@ -9,10 +9,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
-// Icons
+
 import { Menu, Home, LayoutDashboard, Settings, Users, BarChart3 } from "lucide-react";
 
-// Navigation items
+
 const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Divided Difference", href: "/divided-difference", icon: LayoutDashboard },
@@ -29,7 +29,7 @@ export function Sidebar({ className }: SidebarNavProps) {
 
     return (
         <>
-            {/* Mobile Sidebar */}
+
             <Sheet open={open} onOpenChange={setOpen}>                <SheetTrigger asChild className="lg:hidden fixed left-2 bottom-6 z-50">
                 <Button
                     variant="outline"
@@ -45,7 +45,7 @@ export function Sidebar({ className }: SidebarNavProps) {
                 </SheetContent>
             </Sheet>
 
-            {/* Desktop Sidebar */}
+
             <nav
                 className={cn(
                     "hidden lg:flex flex-col w-[240px] min-w-[240px] h-screen border-r bg-background px-2 py-4",
@@ -62,7 +62,7 @@ export function Sidebar({ className }: SidebarNavProps) {
     );
 }
 
-// Desktop navigation component
+
 function DesktopNav() {
     return (
         <div className="space-y-1 py-2">
@@ -72,7 +72,7 @@ function DesktopNav() {
                     href={item.href}
                     className={cn(
                         "flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                        // Using client-side navigation styling
+
                         "transparent"
                     )}
                 >
@@ -86,7 +86,7 @@ function DesktopNav() {
     );
 }
 
-// Mobile navigation component
+
 function MobileNav({ setOpen }: { setOpen: (open: boolean) => void }) {
     return (
         <div className="flex h-full flex-col">
@@ -103,7 +103,7 @@ function MobileNav({ setOpen }: { setOpen: (open: boolean) => void }) {
                             href={item.href}
                             onClick={() => setOpen(false)} className={cn(
                                 "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                                // Using client-side navigation styling
+
                                 "transparent"
                             )}
                         >

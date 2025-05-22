@@ -30,17 +30,17 @@ export default function BisectionPage() {
     const [steps, setSteps] = useState<BisectionStep[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // Format numbers according to global decimal places setting
+
     const formatNumber = (num: number): string => {
         return num.toFixed(decimalPlaces);
     };
 
-    // Function to evaluate mathematical expressions using mathjs
+
     const evaluateExpression = (expr: string, x: number): number => {
         try {
-            // Create a scope with the x value
+
             const scope = { x: x };
-            // Evaluate the expression with mathjs
+
             return math.evaluate(expr, scope);
         } catch (error) {
             throw new Error("Invalid equation format");

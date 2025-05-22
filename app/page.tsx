@@ -22,6 +22,7 @@ export default function Home() {
           <p className="text-base sm:text-lg border-l-4 border-blue-500 dark:border-blue-700 pl-4 py-1">
             Welcome to the Numerical Methods Calculator. This application provides tools for solving various
             numerical problems, including interpolation and root finding.
+            also This website was done in only one week so if you find any bugs please kindly report them to us.
           </p>
         </div>          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
           <Card className="transition-all duration-300 hover:shadow-lg border-l-4 border-l-blue-500 dark:border-l-blue-600">
@@ -69,7 +70,7 @@ export default function Home() {
             <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
               <div>
                 <p className="text-sm sm:text-base">
-                  We are Qatada Azzeh and Mohammad Alnaser, second-year Computer Science students with a strong passion for programming and problem solving. From building practical projects to tackling challenging algorithmic problems, we thrive on turning ideas into real-world solutions.
+                  We are Qatada Azzeh and Mohammad Alnaser, second-year Computer Science students At Applied Science University with a strong passion for programming and problem solving. From building practical projects to tackling challenging algorithmic problems, we thrive on turning ideas into real-world solutions.
                 </p>
                 <p className="mt-4 text-sm sm:text-base">
                   Our journey in computer science has been driven by curiosity, continuous learning, and a shared goal of mastering the art of coding.

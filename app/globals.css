@@ -9,12 +9,12 @@
   }
 }
 
-/* Add smooth theme transition */
+
 * {
   @apply transition-colors duration-300;
 }
 
-/* Custom breakpoint for extra small screens */
+
 @layer utilities {
   @variants responsive {
     @media (min-width: 480px) {
