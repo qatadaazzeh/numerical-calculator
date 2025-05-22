@@ -12,7 +12,7 @@ import { useSettings } from "@/context/settings-context";
 
 export default function SettingsPage() {
     const { theme, setTheme } = useTheme();
-    const { decimalPlaces, setDecimalPlaces, showIterationSteps, setShowIterationSteps } = useSettings();return (
+    const { decimalPlaces, setDecimalPlaces, showIterationSteps, setShowIterationSteps } = useSettings(); return (
         <MainLayout>
             <div className="flex flex-col gap-6">
                 <div className="space-y-2 pb-2">
@@ -78,7 +78,7 @@ export default function SettingsPage() {
                                 </SelectContent>
                             </Select>
                             <div className="text-sm text-muted-foreground mt-1 ml-auto">
-                              Example: {(Math.PI).toFixed(decimalPlaces)}
+                                Example: {(Math.PI).toFixed(decimalPlaces)}
                             </div>
                         </div>
 

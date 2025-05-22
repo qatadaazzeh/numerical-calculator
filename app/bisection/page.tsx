@@ -29,7 +29,7 @@ export default function BisectionPage() {
     const [result, setResult] = useState<number | null>(null);
     const [steps, setSteps] = useState<BisectionStep[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    
+
     // Format numbers according to global decimal places setting
     const formatNumber = (num: number): string => {
         return num.toFixed(decimalPlaces);
@@ -95,7 +95,7 @@ export default function BisectionPage() {
                 });
 
                 if (fMid === 0) {
-                    break; // Found exact solution
+                    break;
                 }
 
                 if (fLeft * fMid < 0) {
@@ -108,7 +108,6 @@ export default function BisectionPage() {
                 iter++;
             }
 
-            // Final iteration
             mid = (left + right) / 2;
             const fLeft = evaluateExpression(equation, left);
             const fRight = evaluateExpression(equation, right);
@@ -232,9 +231,9 @@ export default function BisectionPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-2 sm:grid-cols-2">                            <div className="p-3 rounded-md bg-muted/30">
-                                <div className="text-sm text-muted-foreground">Root:</div>
-                                <div className="font-bold text-lg break-all">{formatNumber(result)}</div>
-                            </div>
+                            <div className="text-sm text-muted-foreground">Root:</div>
+                            <div className="font-bold text-lg break-all">{formatNumber(result)}</div>
+                        </div>
                             <div className="p-3 rounded-md bg-muted/30">
                                 <div className="text-sm text-muted-foreground">Function value:</div>
                                 <div className="font-bold break-all">{formatNumber(evaluateExpression(equation, result))}</div>
@@ -272,16 +271,16 @@ export default function BisectionPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {steps.map((step, index) => (                                        <tr key={step.iteration} className={index % 2 === 0 ? "bg-background" : "bg-muted/20"}>
-                                            <td className="border p-2 text-xs sm:text-sm">{step.iteration}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.a)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.b)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.c)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fa)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fb)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fc)}</td>
-                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.error)}</td>
-                                        </tr>
+                                    {steps.map((step, index) => (<tr key={step.iteration} className={index % 2 === 0 ? "bg-background" : "bg-muted/20"}>
+                                        <td className="border p-2 text-xs sm:text-sm">{step.iteration}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.a)}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.b)}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.c)}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fa)}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fb)}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fc)}</td>
+                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.error)}</td>
+                                    </tr>
                                     ))}
                                 </tbody>
                             </table>

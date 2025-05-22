@@ -16,8 +16,7 @@ export default function DividedDifferencePage() {
     const [xValue, setXValue] = useState("");
     const [result, setResult] = useState<number | null>(null);
     const [dividedDifferenceTable, setDividedDifferenceTable] = useState<number[][]>([]);
-    
-    // Format numbers according to global decimal places setting
+
     const formatNumber = (num: number): string => {
         return num.toFixed(decimalPlaces);
     };
@@ -44,13 +43,10 @@ export default function DividedDifferencePage() {
     const calculateDividedDifference = () => {
         const n = points.length;
         const table: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
-
-        // Fill the first column with y values
         for (let i = 0; i < n; i++) {
             table[i][0] = points[i].y;
         }
 
-        // Calculate divided differences
         for (let j = 1; j < n; j++) {
             for (let i = 0; i < n - j; i++) {
                 table[i][j] = (table[i + 1][j - 1] - table[i][j - 1]) / (points[i + j].x - points[i].x);
@@ -58,8 +54,6 @@ export default function DividedDifferencePage() {
         }
 
         setDividedDifferenceTable(table);
-
-        // Calculate interpolation for xValue
         if (xValue !== "") {
             const x = parseFloat(xValue);
             let interpolatedValue = table[0][0];
@@ -157,11 +151,11 @@ export default function DividedDifferencePage() {
                             </span>
                         </Button>
                     </div>                        {result !== null && (
-                            <div className="mt-4 p-4 border rounded-lg bg-muted/30">
-                                <div className="text-sm text-muted-foreground mb-1">Interpolated value:</div>
-                                <p className="font-bold text-lg break-all">{formatNumber(result)}</p>
-                            </div>
-                        )}
+                        <div className="mt-4 p-4 border rounded-lg bg-muted/30">
+                            <div className="text-sm text-muted-foreground mb-1">Interpolated value:</div>
+                            <p className="font-bold text-lg break-all">{formatNumber(result)}</p>
+                        </div>
+                    )}
 
                         {dividedDifferenceTable.length > 0 && (
                             <div className="mt-6">
@@ -184,10 +178,10 @@ export default function DividedDifferencePage() {
                                                 <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/20"}>
                                                     <td className="border p-2 text-xs sm:text-sm">{i}</td>
                                                     <td className="border p-2 text-xs sm:text-sm">{point.x}</td>
-                                                    {Array.from({ length: Math.min(i + 1, points.length) }, (_, j) => (                                                        <td key={j} className="border p-2 text-xs sm:text-sm">
-                                                            {j < dividedDifferenceTable[i]?.length ?
-                                                                formatNumber(dividedDifferenceTable[i][j]) : ""}
-                                                        </td>
+                                                    {Array.from({ length: Math.min(i + 1, points.length) }, (_, j) => (<td key={j} className="border p-2 text-xs sm:text-sm">
+                                                        {j < dividedDifferenceTable[i]?.length ?
+                                                            formatNumber(dividedDifferenceTable[i][j]) : ""}
+                                                    </td>
                                                     ))}
                                                 </tr>
                                             ))}
