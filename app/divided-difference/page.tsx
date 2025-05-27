@@ -6,19 +6,46 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSettings } from "@/context/settings-context";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
 
 export default function DividedDifferencePage() {
     const { decimalPlaces } = useSettings();
     const [points, setPoints] = useState([
         { x: 0, y: 0 },
         { x: 1, y: 0 },
-    ]);
-    const [xValue, setXValue] = useState("");
+    ]); const [xValue, setXValue] = useState("");
     const [result, setResult] = useState<number | null>(null);
     const [dividedDifferenceTable, setDividedDifferenceTable] = useState<number[][]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const formatNumber = (num: number): string => {
         return num.toFixed(decimalPlaces);
+    };
+
+
+    const generateInterpolatedPoints = () => {
+        if (dividedDifferenceTable.length === 0) return [];
+
+        const xValues = points.map(p => p.x).sort((a, b) => a - b);
+        const minX = Math.min(...xValues) - 1;
+        const maxX = Math.max(...xValues) + 1;
+        const step = (maxX - minX) / 100;
+
+        const interpolatedPoints = [];
+
+        for (let x = minX; x <= maxX; x += step) {
+            let interpolatedValue = dividedDifferenceTable[0][0];
+            let term = 1;
+
+            for (let i = 1; i < points.length; i++) {
+                term *= (x - points[i - 1].x);
+                interpolatedValue += term * dividedDifferenceTable[0][i];
+            }
+
+            interpolatedPoints.push({ x: x, y: interpolatedValue });
+        }
+
+        return interpolatedPoints;
     };
 
     const addPoint = () => {
@@ -38,33 +65,79 @@ export default function DividedDifferencePage() {
         const newPoints = [...points];
         newPoints[index][field] = newValue;
         setPoints(newPoints);
-    };
+    }; const calculateDividedDifference = () => {
+        try {
 
-    const calculateDividedDifference = () => {
-        const n = points.length;
-        const table: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
-        for (let i = 0; i < n; i++) {
-            table[i][0] = points[i].y;
-        }
-
-        for (let j = 1; j < n; j++) {
-            for (let i = 0; i < n - j; i++) {
-                table[i][j] = (table[i + 1][j - 1] - table[i][j - 1]) / (points[i + j].x - points[i].x);
-            }
-        }
-
-        setDividedDifferenceTable(table);
-        if (xValue !== "") {
-            const x = parseFloat(xValue);
-            let interpolatedValue = table[0][0];
-            let term = 1;
-
-            for (let i = 1; i < n; i++) {
-                term *= (x - points[i - 1].x);
-                interpolatedValue += term * table[0][i];
+            if (points.length < 2) {
+                setErrorMessage("At least 2 points are required for interpolation");
+                return;
             }
 
-            setResult(interpolatedValue);
+
+            const xValues = points.map(p => p.x);
+            const uniqueXValues = new Set(xValues);
+            if (uniqueXValues.size !== xValues.length) {
+                setErrorMessage("Duplicate x values are not allowed");
+                return;
+            }
+
+
+            for (let i = 0; i < points.length; i++) {
+                if (isNaN(points[i].x) || isNaN(points[i].y)) {
+                    setErrorMessage(`Invalid values at point ${i + 1}. Please enter valid numbers.`);
+                    return;
+                }
+            }
+
+
+            if (xValue !== "" && isNaN(parseFloat(xValue))) {
+                setErrorMessage("Please enter a valid x value for interpolation");
+                return;
+            }
+
+            setErrorMessage(null);
+
+            const n = points.length;
+            const table: number[][] = Array(n).fill(0).map(() => Array(n).fill(0));
+
+
+            for (let i = 0; i < n; i++) {
+                table[i][0] = points[i].y;
+            }
+
+
+            for (let j = 1; j < n; j++) {
+                for (let i = 0; i < n - j; i++) {
+                    const denominator = points[i + j].x - points[i].x;
+                    if (denominator === 0) {
+                        setErrorMessage(`Division by zero: points ${i} and ${i + j} have the same x value`);
+                        return;
+                    }
+                    table[i][j] = (table[i + 1][j - 1] - table[i][j - 1]) / denominator;
+                }
+            }
+
+            setDividedDifferenceTable(table);
+
+
+            if (xValue !== "") {
+                const x = parseFloat(xValue);
+                let interpolatedValue = table[0][0];
+                let term = 1;
+
+                for (let i = 1; i < n; i++) {
+                    term *= (x - points[i - 1].x);
+                    interpolatedValue += term * table[0][i];
+                }
+
+                setResult(interpolatedValue);
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage("An unexpected error occurred during calculation");
+            }
         }
     }; return (
         <MainLayout>
@@ -148,14 +221,21 @@ export default function DividedDifferencePage() {
                             <span className="mr-1">→</span> Calculate Interpolation
                             <span className="absolute inset-0 flex items-center justify-center bg-primary/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 Calculate Value
-                            </span>
-                        </Button>
-                    </div>                        {result !== null && (
-                        <div className="mt-4 p-4 border rounded-lg bg-muted/30">
-                            <div className="text-sm text-muted-foreground mb-1">Interpolated value:</div>
-                            <p className="font-bold text-lg break-all">{formatNumber(result)}</p>
-                        </div>
-                    )}
+                            </span>                        </Button>
+                    </div>
+
+                        {errorMessage && (
+                            <div className="mt-4 p-4 border border-red-300 rounded-lg bg-red-50 dark:bg-red-950/20 dark:border-red-800">
+                                <div className="text-sm text-red-600 dark:text-red-400">{errorMessage}</div>
+                            </div>
+                        )}
+
+                        {result !== null && (
+                            <div className="mt-4 p-4 border rounded-lg bg-muted/30">
+                                <div className="text-sm text-muted-foreground mb-1">Interpolated value:</div>
+                                <p className="font-bold text-lg break-all">{formatNumber(result)}</p>
+                            </div>
+                        )}
 
                         {dividedDifferenceTable.length > 0 && (
                             <div className="mt-6">
@@ -187,6 +267,64 @@ export default function DividedDifferencePage() {
                                             ))}
                                         </tbody>
                                     </table>
+                                </div>                            </div>
+                        )}
+
+                        {dividedDifferenceTable.length > 0 && (
+                            <div className="mt-6">
+                                <h3 className="text-lg font-semibold mb-2">Interpolation Graph</h3>
+                                <div className="h-96 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis
+                                                type="number"
+                                                dataKey="x"
+                                                domain={['dataMin - 1', 'dataMax + 1']}
+                                                tickFormatter={(value) => value.toFixed(1)}
+                                            />
+                                            <YAxis
+                                                domain={['dataMin - 1', 'dataMax + 1']}
+                                                tickFormatter={(value) => value.toFixed(1)}
+                                            />
+                                            <Tooltip
+                                                formatter={(value: number) => [formatNumber(value), "Interpolated"]}
+                                                labelFormatter={(value) => `x = ${formatNumber(value)}`}
+                                            />
+
+                                            <Line
+                                                data={generateInterpolatedPoints()}
+                                                type="monotone"
+                                                dataKey="y"
+                                                stroke="#8884d8"
+                                                strokeWidth={2}
+                                                dot={false}
+                                                name="Interpolated Polynomial"
+                                            />
+                                            <Line
+                                                data={points}
+                                                type="monotone"
+                                                dataKey="y"
+                                                stroke="#82ca9d"
+                                                strokeWidth={0}
+                                                dot={{ fill: '#82ca9d', strokeWidth: 2, r: 6 }}
+                                                connectNulls={false}
+                                                name="Data Points"
+                                            />
+                                            {result !== null && xValue !== "" && (
+                                                <Line
+                                                    data={[{ x: parseFloat(xValue), y: result }]}
+                                                    type="monotone"
+                                                    dataKey="y"
+                                                    stroke="#ff7300"
+                                                    strokeWidth={0}
+                                                    dot={{ fill: '#ff7300', strokeWidth: 2, r: 8 }}
+                                                    connectNulls={false}
+                                                    name="Interpolated Point"
+                                                />
+                                            )}
+                                        </LineChart>
+                                    </ResponsiveContainer>
                                 </div>
                             </div>
                         )}

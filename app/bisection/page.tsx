@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import * as math from 'mathjs';
 import { useSettings } from "@/context/settings-context";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 interface BisectionStep {
     iteration: number;
@@ -31,10 +32,41 @@ export default function BisectionPage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 
+
     const formatNumber = (num: number): string => {
         return num.toFixed(decimalPlaces);
     };
 
+
+    const generateFunctionPoints = () => {
+        if (!equation) return [];
+
+        try {
+            const aVal = parseFloat(a) || -10;
+            const bVal = parseFloat(b) || 10;
+            const range = Math.abs(bVal - aVal);
+            const minX = Math.min(aVal, bVal) - range * 0.5;
+            const maxX = Math.max(aVal, bVal) + range * 0.5;
+            const step = (maxX - minX) / 200;
+
+            const functionPoints = [];
+
+            for (let x = minX; x <= maxX; x += step) {
+                try {
+                    const y = evaluateExpression(equation, x);
+                    if (isFinite(y)) {
+                        functionPoints.push({ x: x, y: y });
+                    }
+                } catch {
+
+                }
+            }
+
+            return functionPoints;
+        } catch {
+            return [];
+        }
+    };
 
     const evaluateExpression = (expr: string, x: number): number => {
         try {
@@ -283,8 +315,91 @@ export default function BisectionPage() {
                                     </tr>
                                     ))}
                                 </tbody>
-                            </table>
-                        </div>
+                            </table>                        </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+
+                {result !== null && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Function Graph</CardTitle>
+                            <CardDescription>Visualization of the function and root finding process</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="h-96 w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis
+                                            type="number"
+                                            dataKey="x"
+                                            domain={['dataMin - 0.5', 'dataMax + 0.5']}
+                                            tickFormatter={(value) => value.toFixed(1)}
+                                        />
+                                        <YAxis
+                                            domain={['dataMin - 1', 'dataMax + 1']}
+                                            tickFormatter={(value) => value.toFixed(1)}
+                                        />
+                                        <Tooltip
+                                            formatter={(value: number) => [formatNumber(value), "f(x)"]}
+                                            labelFormatter={(value) => `x = ${formatNumber(value)}`}
+                                        />
+
+                                        <ReferenceLine y={0} stroke="#666" strokeDasharray="2 2" />
+
+                                        <Line
+                                            data={generateFunctionPoints()}
+                                            type="monotone"
+                                            dataKey="y"
+                                            stroke="#8884d8"
+                                            strokeWidth={2}
+                                            dot={false}
+                                            name="f(x)"
+                                        />
+                                        <Line
+                                            data={[
+                                                { x: parseFloat(a), y: 0 },
+                                                { x: parseFloat(b), y: 0 }
+                                            ]}
+                                            type="monotone"
+                                            dataKey="y"
+                                            stroke="#82ca9d"
+                                            strokeWidth={0}
+                                            dot={{ fill: '#82ca9d', strokeWidth: 2, r: 6 }}
+                                            connectNulls={false}
+                                            name="Initial Bounds"
+                                        />
+                                        <Line
+                                            data={[{ x: result, y: 0 }]}
+                                            type="monotone"
+                                            dataKey="y"
+                                            stroke="#ff7300"
+                                            strokeWidth={0}
+                                            dot={{ fill: '#ff7300', strokeWidth: 3, r: 8 }}
+                                            connectNulls={false}
+                                            name="Root"
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <div className="mt-4 text-sm text-muted-foreground">
+                                <div className="flex flex-wrap gap-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-0.5 bg-[#8884d8]"></div>
+                                        <span>Function f(x)</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#82ca9d]"></div>
+                                        <span>Initial bounds [a, b]</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[#ff7300]"></div>
+                                        <span>Root (x = {formatNumber(result)})</span>
+                                    </div>
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 )}
