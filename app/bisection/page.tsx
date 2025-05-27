@@ -18,6 +18,7 @@ interface BisectionStep {
     fb: number;
     fc: number;
     error: number;
+    update: string; // Which bound was updated: "a", "b", or "initial"
 }
 
 export default function BisectionPage() {
@@ -107,13 +108,21 @@ export default function BisectionPage() {
             let error = Math.abs(right - left);
             let iter = 0;
 
-            const bisectionSteps: BisectionStep[] = [];
-
-            while (error > tolVal && iter < maxIter) {
+            const bisectionSteps: BisectionStep[] = []; while (error > tolVal && iter < maxIter) {
                 mid = (left + right) / 2;
                 const fLeft = evaluateExpression(equation, left);
                 const fRight = evaluateExpression(equation, right);
                 const fMid = evaluateExpression(equation, mid);
+
+                // Determine which bound will be updated for next iteration
+                let updateType = iter === 0 ? "initial" : "";
+                if (iter > 0) {
+                    if (fLeft * fMid < 0) {
+                        updateType = "b→c"; // right bound will be updated (b = mid)
+                    } else {
+                        updateType = "a→c"; // left bound will be updated (a = mid)
+                    }
+                }
 
                 bisectionSteps.push({
                     iteration: iter,
@@ -123,7 +132,8 @@ export default function BisectionPage() {
                     fa: fLeft,
                     fb: fRight,
                     fc: fMid,
-                    error: error
+                    error: error,
+                    update: updateType
                 });
 
                 if (fMid === 0) {
@@ -138,8 +148,7 @@ export default function BisectionPage() {
 
                 error = Math.abs(right - left);
                 iter++;
-            }
-
+            }            // Final iteration
             mid = (left + right) / 2;
             const fLeft = evaluateExpression(equation, left);
             const fRight = evaluateExpression(equation, right);
@@ -153,7 +162,8 @@ export default function BisectionPage() {
                 fa: fLeft,
                 fb: fRight,
                 fc: fMid,
-                error: error
+                error: error,
+                update: "final"
             });
 
             setResult(mid);
@@ -298,24 +308,26 @@ export default function BisectionPage() {
                                         <th className="border p-2 text-xs sm:text-sm">c</th>
                                         <th className="border p-2 text-xs sm:text-sm">f(a)</th>
                                         <th className="border p-2 text-xs sm:text-sm">f(b)</th>
-                                        <th className="border p-2 text-xs sm:text-sm">f(c)</th>
-                                        <th className="border p-2 text-xs sm:text-sm">Error</th>
+                                        <th className="border p-2 text-xs sm:text-sm">f(c)</th>                                        <th className="border p-2 text-xs sm:text-sm">Error</th>
+                                        <th className="border p-2 text-xs sm:text-sm">Update</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {steps.map((step, index) => (<tr key={step.iteration} className={index % 2 === 0 ? "bg-background" : "bg-muted/20"}>
-                                        <td className="border p-2 text-xs sm:text-sm">{step.iteration}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.a)}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.b)}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.c)}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fa)}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fb)}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fc)}</td>
-                                        <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.error)}</td>
-                                    </tr>
-                                    ))}
-                                </tbody>
-                            </table>                        </div>
+                                    {steps.map((step, index) => (
+                                        <tr key={step.iteration} className={index % 2 === 0 ? "bg-background" : "bg-muted/20"}>
+                                            <td className="border p-2 text-xs sm:text-sm">{step.iteration}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.a)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.b)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.c)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fa)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fb)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.fc)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm">{formatNumber(step.error)}</td>
+                                            <td className="border p-2 text-xs sm:text-sm font-medium">{step.update}</td>
+                                        </tr>
+                                    ))}                                </tbody>
+                            </table>
+                        </div>
                         </CardContent>
                     </Card>
                 )}
