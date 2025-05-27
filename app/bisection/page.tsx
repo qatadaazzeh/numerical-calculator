@@ -18,7 +18,7 @@ interface BisectionStep {
     fb: number;
     fc: number;
     error: number;
-    update: string; // Which bound was updated: "a", "b", or "initial"
+    update: string;
 }
 
 export default function BisectionPage() {
@@ -114,13 +114,12 @@ export default function BisectionPage() {
                 const fRight = evaluateExpression(equation, right);
                 const fMid = evaluateExpression(equation, mid);
 
-                // Determine which bound will be updated for next iteration
                 let updateType = iter === 0 ? "initial" : "";
                 if (iter > 0) {
                     if (fLeft * fMid < 0) {
-                        updateType = "b→c"; // right bound will be updated (b = mid)
+                        updateType = "b→c";
                     } else {
-                        updateType = "a→c"; // left bound will be updated (a = mid)
+                        updateType = "a→c";
                     }
                 }
 
@@ -148,7 +147,7 @@ export default function BisectionPage() {
 
                 error = Math.abs(right - left);
                 iter++;
-            }            // Final iteration
+            }
             mid = (left + right) / 2;
             const fLeft = evaluateExpression(equation, left);
             const fRight = evaluateExpression(equation, right);
