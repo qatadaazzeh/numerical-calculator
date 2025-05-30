@@ -10,13 +10,14 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
 
-import { Menu, Home, LayoutDashboard, Settings, Users, BarChart3 } from "lucide-react";
+import { Menu, Home, LayoutDashboard, Settings, Users, BarChart3, ChartArea } from "lucide-react";
 
 
 const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Divided Difference", href: "/divided-difference", icon: LayoutDashboard },
     { name: "Bisection", href: "/bisection", icon: BarChart3 },
+    { name: "Composite Trapezoidal", href: "#", icon: ChartArea },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 

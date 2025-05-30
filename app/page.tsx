@@ -60,6 +60,24 @@ export default function Home() {
               </Button>
             </CardFooter>
           </Card>
+
+
+          <Card className="transition-all duration-300 hover:shadow-lg border-l-4 border-l-orange-500 dark:border-l-orange-600">
+            <CardHeader className="pb-2">
+              <CardTitle>Composite Trapezoidal</CardTitle>
+              <CardDescription>Numerical integration using trapezoids</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm sm:text-base">
+                The composite trapezoidal rule is a method of numerical integration that approximates the integral of a function by summing the areas of trapezoids under the curve.
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Button asChild className="w-full sm:w-auto">
+                <Link href="/composite-trapezoidal">Try Composite Trapezoidal</Link>
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
 
         <Card className="transition-all duration-300 mt-6 border-t-4 border-t-purple-500 dark:border-t-purple-600">
