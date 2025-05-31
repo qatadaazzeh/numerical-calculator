@@ -17,7 +17,7 @@ const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Divided Difference", href: "/divided-difference", icon: LayoutDashboard },
     { name: "Bisection", href: "/bisection", icon: BarChart3 },
-    { name: "Composite Trapezoidal", href: "#", icon: ChartArea },
+    { name: "Composite Trapezoidal", href: "/trapezoidal", icon: ChartArea },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 
